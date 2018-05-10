@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  mongoexpress:
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    ports:
+      - 8081:8081
+    network_mode: bridge
+    external_links:
+      - mongodb_mongodb_1:mongodb
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    environment: 
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=test
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017 
+    network_mode: bridge
+        
