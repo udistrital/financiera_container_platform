@@ -4,3 +4,4 @@ database
 apache2
 .env_secret.env
 bkup/*
+mongo_data

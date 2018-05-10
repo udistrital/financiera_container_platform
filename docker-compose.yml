@@ -11,7 +11,6 @@ services:
       ports:
         - '5432:5432'
       user: "$USER_ID"
-      network_mode: bridge 
       volumes:
           - ./database:/var/lib/postgresql/data
           - ./bkup:/bkup
@@ -23,9 +22,8 @@ services:
           - PROXY=$PROXY
       volumes:
           - ./workspace/angular/schemaspy:/output
-      network_mode: bridge
-      external_links:
-          - financiera_container_platform_postgresdb_1:database
+      links:
+          - postgresdb:database
       environment:
         - POSTGRES_USER=${DB_BUILD_USER}
         - POSTGRES_PASSWORD=${DB_BUILD_PASS}
@@ -42,12 +40,11 @@ services:
           - USER_ID=$USER_ID
     env_file:
       - .env_secret.env
-    command: sh -c 'go get -u github.com/udistrital/$CRUD_GET_INFO;cd src/github.com/udistrital/$CRUD_GET_INFO;git checkout $CRUD_BRANCH_TARGET;git pull origin $CRUD_BRANCH_TARGET;bee run'
+    command: sh -c 'go get -u github.com/udistrital/$CRUD_GET_INFO;cd src/github.com/udistrital/$CRUD_GET_INFO;git checkout $CRUD_BRANCH_TARGET;git pull origin $CRUD_BRANCH_TARGET;go get ./...;bee run'
     ports:
       - '${CRUD_PORT}:${CRUD_PORT}'
-    network_mode: bridge 
-    external_links:
-      - financiera_container_platform_postgresdb_1:postgresdb
+    links:
+      - postgresdb
     volumes:
       - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
       - /etc/passwd:/etc/passwd:ro
@@ -64,18 +61,64 @@ services:
           - USER_ID=$USER_ID
     env_file:
       - .env_secret.env
-    command: sh -c 'go get -u github.com/udistrital/$MID_GET_INFO;cd src/github.com/udistrital/$MID_GET_INFO;git checkout $MID_BRANCH_TARGET;git pull origin $MID_BRANCH_TARGET;bee run'
+    command: sh -c 'go get -u github.com/udistrital/$MID_GET_INFO;cd src/github.com/udistrital/$MID_GET_INFO;git checkout $MID_BRANCH_TARGET;git pull origin $MID_BRANCH_TARGET;go get ./...;bee run'
     ports:
-      - '$MID_PORT:$MID_PORT'
-    network_mode: bridge    
+      - '$MID_PORT:$MID_PORT' 
     volumes:
       - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
       - /etc/passwd:/etc/passwd:ro
     user: "$USER_ID"
-    external_links:
-      - financiera_container_platform_crud_1:crud
+    links:
+      - crud
+      - mongodb
     depends_on:
       - crud
+  mongoexpress:
+    image: mongo-express
+    restart: on-failure
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    environment: 
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - ./mongo_data:/data/db
+    ports:
+      - 27017:27017 
+  
+  mongo_api:
+    #image: golang:1.8
+    build: 
+      context: ./bee_build
+      args:
+          - PROXY=$PROXY
+          - USER_ID=$USER_ID
+    environment:
+      - MONGO_API_GET_INFO=${MONGO_API_GET_INFO}
+      - MONGO_API_BRANCH_TARGET=${MONGO_API_BRANCH_TARGET}
+      - MONGO_API_PORT=${MONGO_API_PORT}
+    env_file:
+      - .env_secret.env
+    command: sh -c 'go get -u github.com/udistrital/$MONGO_API_GET_INFO;cd src/github.com/udistrital/$MONGO_API_GET_INFO;git checkout $MONGO_API_BRANCH_TARGET;git pull origin $MONGO_API_BRANCH_TARGET;go get ./...;bee run'
+    ports:
+      - '$MONGO_API_PORT:$MONGO_API_PORT'   
+    volumes:
+      - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
+      - /etc/passwd:/etc/passwd:ro
+    user: "$USER_ID"
+    depends_on:
+      - mongodb
   apache2:
     image: httpd:2.4-alpine
     ports:
