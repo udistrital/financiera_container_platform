@@ -70,7 +70,7 @@ services:
     user: "$USER_ID"
     links:
       - crud
-      - mongodb
+      - mongo_api
     depends_on:
       - crud
   mongoexpress:
