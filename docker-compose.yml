@@ -107,7 +107,7 @@ services:
     environment:
       - MONGO_API_GET_INFO=${MONGO_API_GET_INFO}
       - MONGO_API_BRANCH_TARGET=${MONGO_API_BRANCH_TARGET}
-      - MONGO_API_PORT=${MONGO_API_PORT}
+      - FINANCIERA_MONGO_CRUD_PORT=${MONGO_API_PORT}
     env_file:
       - .env_secret.env
     command: sh -c 'go get -u github.com/udistrital/$MONGO_API_GET_INFO;cd src/github.com/udistrital/$MONGO_API_GET_INFO;git checkout $MONGO_API_BRANCH_TARGET;git pull origin $MONGO_API_BRANCH_TARGET;go get ./...;bee run'
