@@ -7,14 +7,11 @@ services:
         - POSTGRES_USER=${DB_BUILD_USER}
         - POSTGRES_PASSWORD=${DB_BUILD_PASS}
         - POSTGRES_DB=${DB_BUILD_NAME}
-        - SCHEMASPY_SCHEMA=${SCHEMASPY_SCHEMA}
       ports:
         - '5432:5432'
-      user: "$USER_ID"
       volumes:
-          - ./database:/var/lib/postgresql/data
+          - postgresfinanciera:/var/lib/postgresql/data          
           - ./bkup:/bkup
-          - /etc/passwd:/etc/passwd:ro
   schemaspy:
       build:
         context: ./schemaspy_build
@@ -47,7 +44,6 @@ services:
       - postgresdb
     volumes:
       - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
-      - /etc/passwd:/etc/passwd:ro
     user: "$USER_ID"
     depends_on:
       - postgresdb
@@ -66,7 +62,6 @@ services:
       - '$MID_PORT:$MID_PORT' 
     volumes:
       - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
-      - /etc/passwd:/etc/passwd:ro
     user: "$USER_ID"
     links:
       - crud
@@ -115,8 +110,6 @@ services:
       - '$MONGO_API_PORT:$MONGO_API_PORT'   
     volumes:
       - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
-      - /etc/passwd:/etc/passwd:ro
-    user: "$USER_ID"
     depends_on:
       - mongodb
   apache2:
@@ -124,7 +117,6 @@ services:
     ports:
      - "80:80"
     volumes:
-     - ./apache2/sites-enabled:/etc/apache2/sites-enabled
      - ./workspace/angular:/usr/local/apache2/htdocs/
   client:
     build:
@@ -144,3 +136,5 @@ services:
     volumes:
       - ./workspace/angular:/workspace/angular
     user: "$USER_ID"
+volumes:
+  postgresfinanciera:

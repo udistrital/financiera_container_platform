@@ -4,18 +4,19 @@ echo "Deteniendo los contenedores si estan en ejecucion..."
 SCHEMASPY_SCHEMA=$SCHEMASPY_SCHEMA DB_BUILD_USER=$DB_BUILD_USER DB_BUILD_NAME=$DB_BUILD_NAME DB_BUILD_PASS=$DB_BUILD_PASS CLIENT_PORT=$CLIENT_PORT CRUD_PORT=$CRUD_PORT MID_PORT=$MID_PORT PROXY=$http_proxy USER_ID=$UID CRUD_GET_INFO=$CRUD_GET_INFO MID_GET_INFO=$MID_GET_INFO CLIENT_CLONE_INFO=$CLIENT_CLONE_INFO CRUD_BRANCH_TARGET=$CRUD_BRANCH_TARGET MID_BRANCH_TARGET=$MID_BRANCH_TARGET CLIENT_BRANCH_TARGET=$CLIENT_BRANCH_TARGET docker-compose down
 echo "Entorno de Desarrollo Kronos"
 echo "Creacion de carpetas necesarias del contenedor..."
-if [ -f workspace/ ]; then
-    echo "Las Carpetas ya fueron creadas..."
-else
-    mkdir -p workspace/{angular,go}
-    mkdir -p workspace/go/src
-    mkdir -p workspace/go/src/github.com
-    mkdir -p workspace/go/src/github.com/udistrital
-    echo "Carpetas creadas..."
-fi
-mkdir -p database
-mkdir -p apache2/sites-enabled
-echo "Construyendo Contendor..."    
+#if [ -f workspace/ ]; then
+#    echo "Las Carpetas ya fueron creadas..."
+#else
+#    mkdir -p workspace/{angular,go}
+#    mkdir -p workspace/go/src
+#    mkdir -p workspace/go/src/github.com
+#    mkdir -p workspace/go/src/github.com/udistrital
+#    echo "Carpetas creadas..."
+#fi
+#mkdir -p database
+#mkdir -p apache2/sites-enabled
+echo "Construyendo Contendor..." 
+docker volume create postgresfinanciera   
 SCHEMASPY_SCHEMA=$SCHEMASPY_SCHEMA DB_BUILD_USER=$DB_BUILD_USER DB_BUILD_NAME=$DB_BUILD_NAME DB_BUILD_PASS=$DB_BUILD_PASS CLIENT_PORT=$CLIENT_PORT CRUD_PORT=$CRUD_PORT MID_PORT=$MID_PORT PROXY=$http_proxy USER_ID=$UID CRUD_GET_INFO=$CRUD_GET_INFO MID_GET_INFO=$MID_GET_INFO CLIENT_CLONE_INFO=$CLIENT_CLONE_INFO CRUD_BRANCH_TARGET=$CRUD_BRANCH_TARGET MID_BRANCH_TARGET=$MID_BRANCH_TARGET CLIENT_BRANCH_TARGET=$CLIENT_BRANCH_TARGET docker-compose build
 echo "ejecutando contenedor..."
 SCHEMASPY_SCHEMA=$SCHEMASPY_SCHEMA DB_BUILD_USER=$DB_BUILD_USER DB_BUILD_NAME=$DB_BUILD_NAME DB_BUILD_PASS=$DB_BUILD_PASS CLIENT_PORT=$CLIENT_PORT CRUD_PORT=$CRUD_PORT MID_PORT=$MID_PORT PROXY=$http_proxy USER_ID=$UID CRUD_GET_INFO=$CRUD_GET_INFO MID_GET_INFO=$MID_GET_INFO CLIENT_CLONE_INFO=$CLIENT_CLONE_INFO CRUD_BRANCH_TARGET=$CRUD_BRANCH_TARGET MID_BRANCH_TARGET=$MID_BRANCH_TARGET CLIENT_BRANCH_TARGET=$CLIENT_BRANCH_TARGET docker-compose up -d
