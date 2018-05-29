@@ -1,6 +1,7 @@
 #!/bin/bash
 source code.conf
 docker volume create postgresfinanciera
+docker volume create mongofinanciera   
 echo "Deteniendo los contenedores si estan en ejecucion..."
 SCHEMASPY_SCHEMA=$SCHEMASPY_SCHEMA DB_BUILD_USER=$DB_BUILD_USER DB_BUILD_NAME=$DB_BUILD_NAME DB_BUILD_PASS=$DB_BUILD_PASS CLIENT_PORT=$CLIENT_PORT CRUD_PORT=$CRUD_PORT MID_PORT=$MID_PORT PROXY=$http_proxy USER_ID=$UID CRUD_GET_INFO=$CRUD_GET_INFO MID_GET_INFO=$MID_GET_INFO CLIENT_CLONE_INFO=$CLIENT_CLONE_INFO CRUD_BRANCH_TARGET=$CRUD_BRANCH_TARGET MID_BRANCH_TARGET=$MID_BRANCH_TARGET CLIENT_BRANCH_TARGET=$CLIENT_BRANCH_TARGET docker-compose down
 echo "Borrando datos de la base de datos..."

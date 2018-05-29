@@ -88,7 +88,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=kronos_app
       - MONGO_INITDB_ROOT_PASSWORD=SOPORTE2018
     volumes:
-      - ./mongo_data:/data/db
+      - mongofinanciera:/data/db
     ports:
       - 27017:27017 
   
@@ -138,3 +138,6 @@ services:
     user: "$USER_ID"
 volumes:
   postgresfinanciera:
+    external: true
+  mongofinanciera:
+    external: true 
