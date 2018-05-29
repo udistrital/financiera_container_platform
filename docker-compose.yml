@@ -37,14 +37,14 @@ services:
           - USER_ID=$USER_ID
     env_file:
       - .env_secret.env
-    command: sh -c 'go get -u github.com/udistrital/$CRUD_GET_INFO;cd src/github.com/udistrital/$CRUD_GET_INFO;git checkout $CRUD_BRANCH_TARGET;git pull origin $CRUD_BRANCH_TARGET;go get ./...;bee run'
+    command: sh -c 'cd src/github.com/udistrital/ ; git clone https://github.com/udistrital/$CRUD_GET_INFO.git ;cd $CRUD_GET_INFO;git checkout $CRUD_BRANCH_TARGET;git pull origin $CRUD_BRANCH_TARGET;go get ./...;bee run' 
     ports:
       - '${CRUD_PORT}:${CRUD_PORT}'
     links:
       - postgresdb
     volumes:
-      - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
-    user: "$USER_ID"
+      - gosources:/home/developer/go/src/github.com/udistrital/
+      - ./workspace/go/src/github.com/udistrital/$CRUD_GET_INFO:/home/developer/go/src/github.com/udistrital/$CRUD_GET_INFO            
     depends_on:
       - postgresdb
 
@@ -57,12 +57,13 @@ services:
           - USER_ID=$USER_ID
     env_file:
       - .env_secret.env
-    command: sh -c 'go get -u github.com/udistrital/$MID_GET_INFO;cd src/github.com/udistrital/$MID_GET_INFO;git checkout $MID_BRANCH_TARGET;git pull origin $MID_BRANCH_TARGET;go get ./...;bee run'
+    command: sh -c 'cd src/github.com/udistrital/ ; git clone https://github.com/udistrital/$MID_GET_INFO.git ;cd $MID_GET_INFO;git checkout $MID_BRANCH_TARGET;git pull origin $MID_BRANCH_TARGET;go get ./...;bee run' 
+                          
     ports:
       - '$MID_PORT:$MID_PORT' 
     volumes:
-      - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
-    user: "$USER_ID"
+      - gosources:/home/developer/go/src/github.com/udistrital/
+      - ./workspace/go/src/github.com/udistrital/$MID_GET_INFO:/home/developer/go/src/github.com/udistrital/$MID_GET_INFO            
     links:
       - crud
       - mongo_api
@@ -105,13 +106,15 @@ services:
       - FINANCIERA_MONGO_CRUD_PORT=${MONGO_API_PORT}
     env_file:
       - .env_secret.env
-    command: sh -c 'go get -u github.com/udistrital/$MONGO_API_GET_INFO;cd src/github.com/udistrital/$MONGO_API_GET_INFO;git checkout $MONGO_API_BRANCH_TARGET;git pull origin $MONGO_API_BRANCH_TARGET;go get ./...;bee run'
+    command: sh -c 'cd src/github.com/udistrital/ ; git clone https://github.com/udistrital/$MONGO_API_GET_INFO.git ;cd $MONGO_API_GET_INFO;git checkout $MONGO_API_BRANCH_TARGET;git pull origin $MONGO_API_BRANCH_TARGET;go get ./...;bee run' 
     ports:
       - '$MONGO_API_PORT:$MONGO_API_PORT'   
     volumes:
-      - ./workspace/go/src/github.com/udistrital/:/home/developer/go/src/github.com/udistrital/
+      - gosources:/home/developer/go/src/github.com/udistrital/
+      - ./workspace/go/src/github.com/udistrital/$MONGO_API_GET_INFO:/home/developer/go/src/github.com/udistrital/$MONGO_API_GET_INFO      
     depends_on:
       - mongodb
+      - crud
   apache2:
     image: httpd:2.4-alpine
     ports:
@@ -140,4 +143,5 @@ volumes:
   postgresfinanciera:
     external: true
   mongofinanciera:
-    external: true 
+    external: true
+  gosources:
